@@ -11,22 +11,33 @@ class avito1:
 
         with open("./qa-into-CoE-trainee-task/TestcaseStructure.json", "r") as read_file:
             data1 = json.load(read_file)
+        error = False
+        if not ("values" in data.keys()) or not ("params" in data1.keys()):
+            error = True
+            json_string = """{
+                    "error": {
+                        "message": "Входные файлы некорректны"
+                    }
+                }"""
+            data1 = json.loads(json_string)
+        else:
+            # print("values:")
+            for value in data["values"]:
+                # print(value)
+                for param in data1["params"]:
+                    # print(params)
+                    param["value"] = value["value"]
 
-        # print("values:")
-        for value in data["values"]:
-            # print(value)
+            # print("params:")
             for param in data1["params"]:
-                # print(params)
-                param["value"] = value["value"]
+                if (str(param["value"]) == ""):
+                    param["value"] = "Валидация параметров на подаче объявления"
+                # print(param)
 
-        # print("params:")
-        for param in data1["params"]:
-            if (str(param["value"]) == ""):
-                param["value"] = "Валидация параметров на подаче объявления"
-            # print(param)
+            with open('newdata.json', 'w', encoding='utf-8') as outfile:
+                json.dump(data1, outfile, ensure_ascii=False)
 
-        with open('newdata.json', 'w', encoding='utf-8') as outfile:
-            json.dump(data1, outfile, ensure_ascii=False)
+        return error
 
 
 if name == "__main__":
